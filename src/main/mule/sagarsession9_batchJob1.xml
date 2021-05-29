@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="f917b156-8a5d-4b45-ba02-67ef385f12e3" >
+		<email:smtp-connection host="smtp.gmail.com" port="587" user="riddhi310@gmail.com" password="sagariddhi" >
+			<email:properties >
+				<email:property key="mail.smtp.starttls.enable" value="true" />
+			</email:properties>
+		</email:smtp-connection>
+	</email:smtp-config>
+	<flow name="sagarsession9_batchJob1Flow" doc:id="23ed75dd-d5f9-4c96-8c24-504f5991a448" >
+		<http:listener doc:name="Listener" doc:id="36ff70e1-56ad-4250-acff-7edbe6d82df3" config-ref="HTTP_Listener_config" path="/batchJob"/>
+		<set-payload value="#[[1,2,3,4,5,6,7]]" doc:name="[1.2.3.4.5.6.7]" doc:id="0af508a0-77f6-45d5-bc8c-ddd7717cb05f" />
+		<batch:job jobName="sagarsession9_batchJob1Batch_Job" doc:id="fc0e17ac-b063-421d-a563-7278e214897f" >
+			<batch:process-records >
+				<batch:step name="Batch_Step" doc:id="a5e5199e-bf1d-41e2-8e15-bf11371c30fb" acceptExpression="#[payload&gt;1]">
+					<set-payload value="#[payload*10]" doc:name="payload*10" doc:id="1d549776-c990-4f8a-9da1-bc7c091b6e16" />
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="2e99800c-e36b-43dd-9ee2-4f7067d027cb" size="2">
+						<logger level="INFO" doc:name="Logger" doc:id="ebd41d9e-30ee-4551-b0ac-63c2a95a24e1" message="#[payload]"/>
+					</batch:aggregator>
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete >
+				<logger level="INFO" doc:name="Logger" doc:id="0b323e37-37af-4b95-b48e-a90398201c5f" message="#[payload]"/>
+			</batch:on-complete>
+		</batch:job>
+	</flow>
+</mule>

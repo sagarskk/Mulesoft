@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="5dca25ae-d958-4fab-a37f-4f082eb81e19" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="sagarsession9Flow" doc:id="a901017e-db08-4f0c-a3ca-a8cccf72a462" >
+		<http:listener doc:name="Listener" doc:id="a42a21ec-0057-405f-ad61-51146091e382" config-ref="HTTP_Listener_config" path="/session9"/>
+		<set-payload value='#[[1,2,"Apple",4,5]]' doc:name="1 to 5" doc:id="57d1e1a8-323a-430c-b41f-a2c8ec8c720d" />
+		<set-variable value="#[[]]" doc:name="myCollection" doc:id="465a4653-7412-4d1a-9442-db9eed682688" variableName="myCollection"/>
+		<foreach doc:name="For Each" doc:id="e939cb92-fd15-4581-864d-fd3c729a6a24" collection="#[vars.myCollection]">
+			<try doc:name="Try" doc:id="867b76d5-081f-4412-b983-dbbc69e07af2" >
+				<set-payload value="#[payload*10]" doc:name="PayLoad in ForEach" doc:id="3d5d0694-a6d3-4be5-8b1a-cfee52f0c21d" />
+				<logger level="INFO" doc:name="Logger" doc:id="8bba2c40-e05c-4566-acae-97b2d98c5bf9" message="#[payload]" />
+				<set-variable value="#[payload]" doc:name="myPayload" doc:id="e5fc2531-280b-4ff4-b5c8-d1201d94ecd3" variableName="myPayload" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6069f0e7-5317-434f-91e8-42f4131eac65" >
+						<set-variable value="#[payload]" doc:name="failedRecord" doc:id="cfb86613-dced-4ac6-ab3d-2e1d6678dd8c" variableName="failedRecord"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</foreach>
+		<ee:transform doc:name="Transform Message" doc:id="341dd789-0ef3-435f-af3a-12581f7b3cd4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	NewPayload: vars.myPayload,
+	OldPayload : payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="newPayloadFromForEach" doc:id="9c6de5ac-3191-42b7-b7ec-50abd6b207c1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+ "NewPayload" : vars.myPayload,
+ "OldPayload" : payload,
+ "FailedRecord" : vars.failedRecord
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

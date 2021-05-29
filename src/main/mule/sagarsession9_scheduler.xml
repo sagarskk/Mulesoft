@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="sagarsession9_schedulerFlow" doc:id="2b16aee6-3ae3-459c-8046-fd7c0d8a990d" >
+		<scheduler doc:name="Scheduler" doc:id="8421b214-1d57-47e9-a510-23319730943e" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="100" timeUnit="SECONDS"/>
+			</scheduling-strategy>
+		</scheduler>
+		<logger level="INFO" doc:name="Logger" doc:id="8394c2b3-7623-4242-ba9a-11c5ca74845d" message='#["Triggered at : " : now()]'/>
+	</flow>
+</mule>

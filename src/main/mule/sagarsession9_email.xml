@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<email:smtp-config name="Email_SMTP1" doc:name="Email SMTP" doc:id="750ed9e5-6aca-439a-8817-93984d3f715b" >
+		<email:smtp-connection host="smtp.gmail.com" port="587" user="riddhi310@gmail.com" password="sagariddhi" >
+			<email:properties >
+				<email:property key="mail.smtp.starttls.enable" value="true" />
+			</email:properties>
+		</email:smtp-connection>
+	</email:smtp-config>
+	<flow name="sagarsession9_emailFlow" doc:id="9d3ea767-9873-49cf-b56b-fac88a0474a4" >
+		<http:listener doc:name="Listener" doc:id="2c374969-2dc6-4047-91b3-0e3321f97812" config-ref="HTTP_Listener_config" path="/email"/>
+		<email:send doc:name="Send" doc:id="bab50aef-f65f-4e96-b492-154a4c83ab63" config-ref="Email_SMTP1" fromAddress="riddhi310@gmail.com" subject='"Hello Email from Mule Interface"'>
+			<email:to-addresses >
+				<email:to-address value="sagar.2k5@gmail.com" />
+				<email:to-address value="riddhi310@gmail.com" />
+			</email:to-addresses>
+			<email:body contentType="text/html" >
+				<email:content ><![CDATA[#["<h1> Hello Email from Mulesoft Interface Developed by Sagar </h1>"]]]></email:content>
+			</email:body>
+		</email:send>
+		<ee:transform doc:name="Transform Message" doc:id="d84b98ae-5b78-4980-93a6-f4691282421d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

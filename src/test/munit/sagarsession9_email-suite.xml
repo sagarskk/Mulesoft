@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="sagarsession9_email-suite.xml" />
+	<munit:test name="sagarsession9_emailFlow-test" doc:id="b86b5749-b1a1-40da-9303-5373e010004a" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Send" doc:id="cccdade5-77d4-4dd0-a7b2-3de3cf09abdb" processor="email:send">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="bab50aef-f65f-4e96-b492-154a4c83ab63" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://sagarsession9emailFlowtest\mock_payload.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://sagarsession9emailFlowtest\mock_attributes.dwl')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="2c5a0fa1-9262-40c4-b71e-0569067a83aa" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://sagarsession9emailFlowtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://sagarsession9emailFlowtest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to sagarsession9_emailFlow" doc:id="56bbfa1f-7236-4abc-8787-7d5bda7eeb7a" name="sagarsession9_emailFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="e7aebafe-4f87-4ae4-8ad3-650fd66b17fe" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import sagarsession9emailFlowtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
